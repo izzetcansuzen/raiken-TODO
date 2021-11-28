@@ -89,6 +89,7 @@ body{
 /*TODO-MAIN*/
 /*    custom checkbox*/
 .check-custom{
+    position: relative;
     width: 1.25rem;
     height: 1.25rem;
     border-radius: 50%;
@@ -132,6 +133,13 @@ body{
     right: 50px;
     background-color: transparent;
     cursor: pointer;
+}
+
+.todo-form-input-svg{
+    position: absolute;
+    pointer-events: none;
+    top: 2px;
+    left: 1.5px;
 }
 
 /*TODO-MAIN*/
@@ -201,7 +209,7 @@ body{
 /*when todo completed there will be visible*/
 /*done icon*/
 .todo-item-done-icon{
-    display: none;
+    display: block;
     position: absolute;
     top: .7px;
     left: 2px;
@@ -240,3 +248,13 @@ body{
 /*.deneme:hover{*/
 /*    fill: #111;*/
 /*}*/
+
+.done-item{
+    position: absolute;
+    top: 2px;
+    left: 1.5px;
+    width: 20px;
+    height: 20px;
+    background: url("./../svg/done.svg");
+    background-repeat: no-repeat;
+}
