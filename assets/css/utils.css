@@ -26,3 +26,21 @@ img{
     object-position: center;
 }
 
+.icon{
+    cursor: pointer;
+}
+
+button{
+    border: none;
+    outline: none;
+    padding: 0px;
+}
+
+.d-none{
+    display: none;
+}
+
+.custom--add{
+    background-color: var(--main-color);
+}
+
