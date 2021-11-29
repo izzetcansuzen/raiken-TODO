@@ -44,3 +44,10 @@ button{
     background-color: var(--main-color);
 }
 
+svg{
+    pointer-events: none;
+}
+.done-item{
+    pointer-events: none;
+}
+

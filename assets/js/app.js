@@ -1,62 +1,42 @@
+//All element variables
+const headerDate = document.querySelector('.todo-header-date');
+const todoForm = document.querySelector('.todo-form');
+const todoFormCheckbox = document.querySelector('.check-custom');
+const todoInput = document.querySelector('.todo-input');
+let todoList = document.querySelector('.todo-list');
+const uncompletedSpan = document.getElementById('uncompleted');
+const completedSpan = document.getElementById('completed');
+
+//All eventlisteners
+window.addEventListener('DOMContentLoaded',setDate);
+window.addEventListener('DOMContentLoaded',getTodoItemsToScreen);
+window.addEventListener('DOMContentLoaded',setSpanTexts);
+todoForm.addEventListener('submit',addTodo);
+todoFormCheckbox.addEventListener('click',isCompleted);
+todoList.addEventListener('click',todoActions);
+
+//variables
 let todos = [];
 
-// firstly select date element
-const dateText = document.querySelector('.todo-header-date');
-
-// set date element to browser's date time
-window.addEventListener('DOMContentLoaded', setDate(dateText));
-
-function setDate() {
-    const dateObject = {
+//functions
+function setDate(){
+    let date = {
         day: new Date().getDate(),
-        month: new Date().getMonth(),
-        year: new Date().getFullYear(),
+        month: new Date().getMonth() + 1,
+        year:   new Date().getFullYear()
     }
-    dateText.innerText = `${dateObject.day} / ${dateObject.month} / ${dateObject.year}`;
-    return dateObject;
+    headerDate.innerText = `${date.day} / ${date.month} / ${date.year}`;
+    return date;
 }
-
-//get input value
-const todoForm = document.querySelector('.todo-form');
-const todoInput = document.querySelector('.todo-input');
-
-todoForm.addEventListener('submit',addTodo);
-
-function addTodo(e){
-    e.preventDefault();
-    //my input's empty status is here
-    const empty = isEmpty(todoInput.value);
-
-    const todoItem = {
-        value: todoInput.value,
-        createdDate: setDate(),
-        completedStatus: checkFormCheckBox(e),
-    }
-
-    if(empty.isEmpty){
-        createTodoElement(todoItem);
-        addTodoToStorage(todoItem);
-        clearInput(todoInput)
-    }else{
-        console.error(`${empty.message}`)
-    }
-
-}
-
-//  select todo elements
-const todoList = document.querySelector('.todo-list');
-
-//create todo element
-function createTodoElement(data) {
-    let html = `
-        <div class="todo-list-item-container">
-                            <li class="todo-item flex">
+function createListItem(data){
+    let html = `<li class="todo-list-item-container">
+                            <div class="todo-item flex">
                                 <div class="todo-item-check-text flex">
-                                    <label for="todo-item-checkbox1" class="todo-item-checkbox flex">
-                                        <input type="checkbox" class="todo-check" id="todo-item-checkbox1">
+                                    <label for=${data.id} class="todo-item-checkbox flex">
+                                        <input type="checkbox" class="todo-check" id="deneme">
                                         <div class="check-custom">
-<!--                                        if my completed status is true this code add done icon to my element-->
-                                           ${(data.completedStatus) ? '<div class="done-item"></div>' : '' }
+                                            <!-- if my completed status is true this code add done icon to my element -->
+                                            ${(data.completedStatus) ? '<div class="done-item"></div>' : '' }
                                         </div>
                                     </label>
                                     <a class="todo-text">${data.value}</a>
@@ -75,59 +55,155 @@ function createTodoElement(data) {
                                             <path d="M3.125 7.29167H21.875V7.29167C20.8256 7.29167 20.3009 7.29167 19.8949 7.48369C19.4766 7.68152 19.1399 8.01827 18.942 8.43656C18.75 8.84255 18.75 9.36726 18.75 10.4167V16.8333C18.75 18.7189 18.75 19.6618 18.1642 20.2475C17.5784 20.8333 16.6356 20.8333 14.75 20.8333H10.25C8.36438 20.8333 7.42157 20.8333 6.83579 20.2475C6.25 19.6618 6.25 18.719 6.25 16.8333V10.4167C6.25 9.36726 6.25 8.84255 6.05798 8.43656C5.86014 8.01827 5.5234 7.68152 5.10511 7.48369C4.69911 7.29167 4.17441 7.29167 3.125 7.29167V7.29167Z" stroke="white" stroke-width="2" stroke-linecap="round"/>
                                             <path d="M10.4877 3.51103C10.6064 3.40029 10.8679 3.30243 11.2318 3.23263C11.5956 3.16283 12.0414 3.125 12.5 3.125C12.9586 3.125 13.4044 3.16283 13.7683 3.23263C14.1321 3.30242 14.3937 3.40029 14.5124 3.51103" stroke="white" stroke-width="2" stroke-linecap="round"/>
                                         </svg>
-
                                     </div>
                                 </div>
-                            </li>
-                            <div class="todo-item-date">
-                                ${data.createdDate.day} / ${data.createdDate.month} / ${data.createdDate.year}
                             </div>
-                        </div>
-    `;
-
+                            <div class="todo-item-date">
+                                    ${data.createdDate.day} / ${data.createdDate.month} / ${data.createdDate.year}
+                            </div>
+                        </li>`;
     todoList.innerHTML += html;
 }
+function addTodo(e){
+    e.preventDefault();
 
+    let userTodoValue = todoInput.value;
+    let emptyStatus = isEmpty(userTodoValue);
 
-//STORAGE
-function addTodoToStorage(item){
-    todos.push(item);
-    console.log(todos)
-}
+    const todoItem = {
+        id: getRandomNumber(),
+        value:  userTodoValue,
+        completedStatus: isCompleted(),
+        createdDate: setDate(),
+        endingDate:null
+    }
 
-
-//UTILS
-//check empty value
-function isEmpty(text){
-    if(text){
-        return{
-            isEmpty: true,
-            message: "Bu alan boş değildir",
-        };
+    if(emptyStatus.status){
+        addTodoToStorage(todoItem);
+        createListItem(todoItem);
+        clear(todoInput)
     }else{
-        return{
-            isEmpty: false,
-            message: "Bu alan boştur"
+        console.log(emptyStatus.message);
+    }
+
+}
+function addTodoToStorage(todoItem){
+    if(localStorage.getItem('raikenTodos') === null){
+        todos = [];
+    }else{
+        todos = JSON.parse(localStorage.getItem('raikenTodos'));
+    }
+    todos.push(todoItem);
+    localStorage.setItem('raikenTodos',JSON.stringify(todos));
+}
+function removeTodoFromStorage(id){
+    if(localStorage.getItem('raikenTodos') === null){
+        todos = [];
+    }else{
+        todos = JSON.parse(localStorage.getItem('raikenTodos'));
+    }
+    todos = todos.filter(item => item.id != id)
+    localStorage.setItem('raikenTodos',JSON.stringify(todos));
+}
+function getTodoItemsToScreen(){
+    if(localStorage.getItem('raikenTodos') === null){
+        todos = [];
+    }else{
+        todos = JSON.parse(localStorage.getItem('raikenTodos'));
+    }
+    todos.forEach(item => {
+        createListItem(item);
+    })
+}
+function todoActions(e){
+    e.preventDefault();
+
+    let focusItem = e.target;
+    // console.log(focusItem);
+
+    if(focusItem.classList.contains('todo-item-trash-icon')){
+        let id = e.target.parentElement.parentElement.firstElementChild.firstElementChild.getAttribute('for');
+        let element = e.target.parentElement.parentElement.parentElement;
+        element.remove();
+        removeTodoFromStorage(id);
+    }
+    if(focusItem.classList.contains('check-custom')){
+        let id = e.target.parentElement.parentElement.firstElementChild.getAttribute('for');
+        if(focusItem.children.length == 0){
+            focusItem.innerHTML = `<div class="done-item"></div>`;
+            makeDone(id);
+        }else{
+            focusItem.innerHTML = '';
+            makeDone(id);
         }
     }
 }
-function clearInput(input){
+function setSpanTexts(){
+    if(localStorage.getItem('raikenTodos') === null){
+        todos = [];
+    }else{
+        todos = JSON.parse(localStorage.getItem('raikenTodos'));
+    }
+    let completedArray = [];
+    let uncompletedArray = [];
+    todos.forEach(item => {
+        if(item.completedStatus){
+            completedArray.push(item.completedStatus);
+        }else{
+            uncompletedArray.push(item.completedStatus);
+        }
+    })
+    completedSpan.textContent = completedArray.length;
+    uncompletedSpan.textContent = uncompletedArray.length;
+}
+
+//utils functions
+function getRandomNumber(){
+    return Math.floor(10000 + Math.random() * 90000);
+}
+function isEmpty(input){
+    if(!input){
+        return {
+            status: false,
+            message: "This input is empty",
+        }
+    }else{
+        return{
+            status:true,
+            message: "This input is not empty",
+        }
+    }
+}
+function isCompleted(){
+    let checkbox = todoFormCheckbox.children[0];
+
+    if(checkbox.classList.contains('d-none')){
+        checkbox.classList.toggle('d-none');
+        return false;
+    }else if(!checkbox.classList.contains('d-none')){
+        checkbox.classList.toggle('d-none');
+        return true;
+    }
+}
+function clear(input){
     input.value = '';
 }
-const formCustomCheckBox = document.querySelector('#todo-input-check');
-formCustomCheckBox.addEventListener('click', checkFormCheckBox);
-function checkFormCheckBox(e){
-    e.preventDefault();
-    const item = formCustomCheckBox.children[0];
-    if(!item.classList.contains("d-none")){
-        item.classList.toggle('d-none');
-        console.log("item yapılmadı");
-        return true;
+function makeDone(id){
+    if(localStorage.getItem('raikenTodos') === null){
+        todos = [];
     }else{
-        item.classList.toggle('d-none');
-        console.log("item yapıldı");
-        return false;
+        todos = JSON.parse(localStorage.getItem('raikenTodos'));
     }
+    todos.map(item => {
+        if(item.id == id){
+           if(item.completedStatus){
+               item.completedStatus = false;
+           }else{
+               item.completedStatus = true
+           }
+        }
+    });
+    localStorage.setItem('raikenTodos',JSON.stringify(todos));
 }
 
 
